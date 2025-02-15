@@ -5,14 +5,15 @@
 #include <queue>
 #include <iostream>
 #include <functional>
+#include <cstdint>//要在模板中用uint_32, 记得引入该库函数
 
 #ifndef SUDOKU_H
 #define SUDOKU_H
 using namespace std;
 
 namespace std {
-    template<> struct hash<std::array<uint32_t, 2>> {
-        size_t operator()(const std::array<uint32_t, 2>& arr) const {
+    template<> struct hash<array<uint32_t, 2>> {
+        size_t operator()(const array<uint32_t, 2>& arr) const {
             size_t hash = 0;
             hash = (size_t)arr[0] << 32 + (size_t)arr[1];
             return hash;
@@ -20,6 +21,7 @@ namespace std {
     };
 }
 
+//只要用了模板，哪怕是stl的容器，原型和定义就不能分开
 typedef array<uint32_t, 2> position;
 typedef array<array<int, 9>, 9> chess;
 class Sudoku
@@ -74,6 +76,7 @@ class Sudoku
 public:
     Sudoku(chess _Chessboard) : Chessboard(_Chessboard) {
         start_state_to_lattices_front();
+        start_state_to_lattices_back();
         //start_state_to_chess();
     };
 
