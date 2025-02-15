@@ -17,21 +17,22 @@ using namespace std;
 int main(){
 
     array<array<int, 9>, 9> board = {
-        array<int,9>{5, 0, 0,    0, 0, 0,   0, 6, 8},
-        array<int,9>{3, 0, 0,    0, 5, 0,   4, 0, 0},
-        array<int,9>{8, 0, 0,    6, 2, 9,   0, 0, 0},
+        array<int,9>{0, 0, 6,    0, 0, 4,   0, 9, 5},
+        array<int,9>{0, 0, 4,    0, 0, 8,   0, 0, 6},
+        array<int,9>{0, 5, 0,    9, 0, 0,   0, 0, 3},
 
-        array<int,9>{0, 0, 4,    0, 6, 1,   0, 0, 7},
-        array<int,9>{0, 0, 3,    0, 0, 0,   0, 8, 1},
-        array<int,9>{0, 1, 0,    7, 0, 5,   0, 0, 0},
+        array<int,9>{0, 0, 0,    8, 3, 0,   0, 7, 0},
+        array<int,9>{6, 0, 2,    0, 9, 0,   8, 0, 0},
+        array<int,9>{8, 3, 0,    0, 0, 0,   1, 0, 0},
 
-        array<int,9>{0, 3, 5,    2, 0, 7,   0, 0, 0},
-        array<int,9>{0, 6, 0,    0, 0, 3,   2, 4, 0},
-        array<int,9>{0, 0, 0,    9, 1, 0,   5, 0, 3}
+        array<int,9>{0, 0, 0,    1, 0, 5,   6, 0, 0},
+        array<int,9>{0, 6, 7,    4, 0, 0,   0, 5, 0},
+        array<int,9>{5, 0, 0,    0, 2, 9,   0, 0, 0}
     };
 
     Sudoku game = Sudoku(board);
-    game.fillChessboeard();
+    game.method_1_WeiYu();
     game.showChess();
+    game.showAmbiguity();
 
 }
