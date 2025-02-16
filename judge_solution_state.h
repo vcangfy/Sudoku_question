@@ -1,11 +1,12 @@
 //from deepseek
+#ifndef JSS_H
+#define JSS_H
+
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
 
-#ifndef JSS_H
-#define JSS_H
 using namespace std;
 //用到了模板的话，就必须要要把函数定义与头文件写在一起。
 

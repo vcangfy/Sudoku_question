@@ -2,6 +2,7 @@
 #include <iostream>
 #include <array>
 #include "Sudoku.h"
+#include "try_all_state.h"
 using namespace std;
 
 // namespace std {
@@ -34,5 +35,7 @@ int main(){
     game.fillChessboard();
     game.showChess();
     //game.showAmbiguity();
+
+    solveSudoku(board);
 
 }

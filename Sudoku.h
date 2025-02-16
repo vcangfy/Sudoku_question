@@ -1,3 +1,6 @@
+#ifndef SUDOKU_H
+#define SUDOKU_H
+
 #include <array>
 #include <vector>
 #include <unordered_map>
@@ -7,8 +10,6 @@
 #include <functional>
 #include <cstdint>//要在模板中用uint_32, 记得引入该库函数
 
-#ifndef SUDOKU_H
-#define SUDOKU_H
 using namespace std;
 
 namespace std {
@@ -29,8 +30,8 @@ class Sudoku
 {
     chess<int> Chessboard;
 
-    chess<unordered_set<int>> lattices_front;
-    chess<unordered_set<int>> lattices_back;
+    chess<unordered_set<int>> lattices_front;//每个格子可能为
+    chess<unordered_set<int>> lattices_back;//每个格子必不可能为
 
     vector<position> sure;
     unordered_set<position> not_sure;
@@ -38,7 +39,7 @@ class Sudoku
 
     //array<array<unordered_set<uint32_t>, 9>, 3> structrue;
 
-    void start_state() {
+    void init_state() {
         remember_sure = 0;
         for (uint32_t i = 0; i < 9; ++i) {
             for (uint32_t j = 0; j < 9; ++j) {
@@ -123,7 +124,7 @@ class Sudoku
 
 public:
     Sudoku(chess<int> _Chessboard) : Chessboard(_Chessboard) {
-        start_state();
+        init_state();
         //start_state_to_chess();
     };
 
@@ -141,13 +142,13 @@ public:
 
             eliminate_ambiguity(
                 i, j, val, 
-                [&qu,this](uint32_t x,uint32_t y){ 
+                [&qu](uint32_t x,uint32_t y){ 
                     qu.push({x,y}); 
                 }
             );
         }
         remember_sure = sure.size();
-    }
+    };
     
     void method_2_PaiChu() {
         for (auto [i, j]: not_sure) {
@@ -214,14 +215,18 @@ public:
 
                     eliminate_ambiguity(
                         i, j, num, 
-                        [this](uint32_t x, uint32_t y) {;}
+                        [](uint32_t x, uint32_t y) {;}
                     );
 
                     break;
                 }
             }
         }
-    }
+    };
+
+    void method_3_QuKuai() {
+
+    };
 
     void fillChessboard() {
         while(remember_sure != sure.size()) {
@@ -230,7 +235,7 @@ public:
             method_2_PaiChu();
             //showChess();
         }
-    }
+    };
 
     void showChess() {
         cout << endl;
