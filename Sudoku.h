@@ -8,6 +8,7 @@
 #include <queue>
 #include <iostream>
 #include <functional>
+#include <cmath>
 #include <cstdint>//要在模板中用uint_32, 记得引入该库函数
 
 using namespace std;
@@ -24,33 +25,38 @@ namespace std {
 
 //只要用了模板，哪怕是stl的容器，原型和定义就不能分开
 typedef array<uint32_t, 2> position;
-template <typename T>
-using chess = array<array<T, 9>, 9>;
-class Sudoku
-{
-    chess<int> Chessboard;
+template <typename T, int N>
+using chess = array<array<T, N>, N>;
+template<int N>
+class Sudoku {
+    chess<int, N> Chessboard;
 
-    chess<unordered_set<int>> lattices_front;//每个格子可能为
-    chess<unordered_set<int>> lattices_back;//每个格子必不可能为
+    chess<unordered_set<int>, N> lattices_front;//每个格子可能为
+    chess<unordered_set<int>, N> lattices_back;//每个格子必不可能为
 
     vector<position> sure;
     unordered_set<position> not_sure;
     uint32_t remember_sure;
+    int sqrt_n;
 
     //array<array<unordered_set<uint32_t>, 9>, 3> structrue;
 
     void init_state() {
         remember_sure = 0;
-        for (uint32_t i = 0; i < 9; ++i) {
-            for (uint32_t j = 0; j < 9; ++j) {
+        unordered_set<int> temp;
+        for(int i = 0; i < N; ++i) {
+            temp.insert(i+1);
+        }
+        for (uint32_t i = 0; i < N; ++i) {
+            for (uint32_t j = 0; j < N; ++j) {
                 if (Chessboard[i][j] == 0) {
-                    lattices_front[i][j] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+                    lattices_front[i][j] = temp;
                     lattices_back[i][j] = {};
                     not_sure.insert({i,j});
                 }
                 else {
                     lattices_front[i][j] = {(Chessboard[i][j])};
-                    lattices_back[i][j] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+                    lattices_back[i][j] = temp;
                     lattices_back[i][j].erase(Chessboard[i][j]);
                     sure.push_back({i,j});
                 }
@@ -69,7 +75,7 @@ class Sudoku
         function<void(uint32_t, uint32_t)> action
     ) {
             // 同一行其他未填格子减少可能
-            for (uint32_t col = 0; col < 9; ++col) {
+            for (uint32_t col = 0; col < N; ++col) {
                 if (col != j && Chessboard[i][col] == 0 
                     && lattices_front[i][col].find(val) != lattices_front[i][col].end()
                 ) {
@@ -84,7 +90,7 @@ class Sudoku
                 }
             }
             // 收集同一列其他未填格子减少可能
-            for (uint32_t row = 0; row < 9; ++row) {
+            for (uint32_t row = 0; row < N; ++row) {
                 if (row != i && Chessboard[row][j] == 0 
                     && lattices_front[row][j].find(val) != lattices_front[row][j].end()
                 ) {
@@ -99,12 +105,12 @@ class Sudoku
                 }
             }
             // 收集同一宫其他未填格子减少可能
-            uint32_t startRow = i / 3;
-            uint32_t startCol = j / 3;
-            for (uint32_t x = 0; x < 3; ++x) {
-                for (uint32_t y = 0; y < 3; ++y) {
-                    uint32_t currentRow = startRow * 3 + x;
-                    uint32_t currentCol = startCol * 3 + y;
+            uint32_t startRow = i / sqrt_n;
+            uint32_t startCol = j / sqrt_n;
+            for (uint32_t x = 0; x < sqrt_n; ++x) {
+                for (uint32_t y = 0; y < sqrt_n; ++y) {
+                    uint32_t currentRow = startRow * sqrt_n + x;
+                    uint32_t currentCol = startCol * sqrt_n + y;
                     if(currentRow == i && currentCol == j) continue;
                     if (Chessboard[currentRow][currentCol] == 0 && 
                         lattices_front[currentRow][currentCol].find(val) != lattices_front[currentRow][currentCol].end()
@@ -123,7 +129,8 @@ class Sudoku
     }
 
 public:
-    Sudoku(chess<int> _Chessboard) : Chessboard(_Chessboard) {
+    Sudoku<N>(chess<int, N> _Chessboard) : Chessboard(_Chessboard) {
+        sqrt_n = (int)sqrt(N);
         init_state();
         //start_state_to_chess();
     };
@@ -162,7 +169,7 @@ public:
 
                 // 检查行：同一行其他格子的排除集是否都包含 num
                 bool rowValid = true;
-                for (int col = 0; col < 9; ++col) {
+                for (int col = 0; col < N; ++col) {
                     if (col == j) continue;
                     if (lattices_back[i][col].find(num) == lattices_back[i][col].end()) {
                         //伙伴格子必不可能的数没有该数
@@ -177,7 +184,7 @@ public:
                 // 检查列：同一列其他格子的排除集是否都包含 num
                 bool colValid = true;
                 if (!canFill) { // 若行已满足，无需再检查
-                    for (int row = 0; row < 9; ++row) {
+                    for (int row = 0; row < N; ++row) {
                         if (row == i) continue;
                         if (lattices_back[row][j].find(num) == lattices_back[row][j].end()) {
                             colValid = false;
@@ -192,10 +199,10 @@ public:
                 // 检查宫：同一宫其他格子的排除集是否都包含 num
                 bool blockValid = true;
                 if (!canFill) { // 若行或列已满足，无需再检查
-                    int blockRow = (i / 3) * 3;
-                    int blockCol = (j / 3) * 3;
-                    for (int x = blockRow; x < blockRow + 3; ++x) {
-                        for (int y = blockCol; y < blockCol + 3; ++y) {
+                    int blockRow = (i / sqrt_n) * sqrt_n;
+                    int blockCol = (j / sqrt_n) * sqrt_n;
+                    for (int x = blockRow; x < blockRow + sqrt_n; ++x) {
+                        for (int y = blockCol; y < blockCol + sqrt_n; ++y) {
                             if (x == i && y == j) continue;
                             if (lattices_back[x][y].find(num) == lattices_back[x][y].end()) {
                                 blockValid = false;
@@ -239,12 +246,14 @@ public:
 
     void showChess() {
         cout << endl;
-        for (uint32_t i = 0; i < 9; i++) {
-            if(i && i%3 == 0)
+        for (uint32_t i = 0; i < N; i++) {
+            if(i && i%sqrt_n == 0)
                 cout << endl;
-            for (uint32_t j = 0; j < 9; j++) {
-                if(j && j%3 == 0)
-                    cout << "   ";
+            for (uint32_t j = 0; j < N; j++) {
+                if(j && j%sqrt_n == 0)
+                    cout << "  ";
+                if(Chessboard[i][j] > 9) {;}
+                else cout << " ";
                 if(!Chessboard[i][j]) {
                     cout << "\x1b[38;5;255m" << Chessboard[i][j] << "\x1b[0m" << " ";
                 }

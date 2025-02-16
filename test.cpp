@@ -1,41 +1,23 @@
-#include <vector>
 #include <iostream>
-#include <array>
+#include <chrono>
 #include "Sudoku.h"
 #include "try_all_state.h"
+#include "data.h"
 using namespace std;
 
-// namespace std {
-//     template<> struct hash<std::array<int, 2>> {
-//         size_t operator()(const std::array<int, 2>& arr) const {
-//             size_t hash = 0;
-//             hash = arr[0] << 32 + arr[1];
-//             return hash;
-//         }
-//     };
-// }
-
 int main(){
+    auto chess = data::super_board;
+    const int n = chess[0].size();
 
-    array<array<int, 9>, 9> board = {
-        array<int,9>{4, 0, 0,    0, 7, 0,   0, 8, 0},
-        array<int,9>{0, 0, 0,    2, 0, 9,   0, 3, 0},
-        array<int,9>{0, 6, 7,    0, 3, 0,   9, 0, 0},
+    Sudoku<n> game = Sudoku<n>(chess);
+    
+    //Sudoku_try_all<n> violate_game = Sudoku_try_all<n>(chess);
 
-        array<int,9>{0, 5, 0,    0, 0, 0,   0, 9, 2},
-        array<int,9>{0, 0, 0,    6, 9, 0,   0, 1, 0},
-        array<int,9>{0, 0, 9,    0, 0, 5,   3, 0, 0},
-
-        array<int,9>{0, 4, 8,    0, 0, 0,   0, 0, 0},
-        array<int,9>{0, 0, 0,    4, 0, 0,   1, 0, 0},
-        array<int,9>{0, 0, 0,    1, 0, 7,   0, 2, 4}
-    };
-
-    Sudoku game = Sudoku(board);
+    auto start = chrono::high_resolution_clock::now();
     game.fillChessboard();
+    //violate_game.solveSudoku();
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
     game.showChess();
-    //game.showAmbiguity();
-
-    solveSudoku(board);
-
+    cout << "It tooks: " << (double)duration.count()/1000.0 << " s" << endl;
 }
