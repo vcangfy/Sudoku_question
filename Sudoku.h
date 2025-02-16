@@ -132,7 +132,6 @@ public:
     Sudoku<N>(chess<int, N> _Chessboard) : Chessboard(_Chessboard) {
         sqrt_n = (int)sqrt(N);
         init_state();
-        //start_state_to_chess();
     };
 
     void method_1_WeiYu() {
