@@ -31,8 +31,8 @@ int main(){
     };
 
     Sudoku game = Sudoku(board);
-    game.method_1_WeiYu();
+    game.fillChessboard();
     game.showChess();
-    game.showAmbiguity();
+    //game.showAmbiguity();
 
 }
