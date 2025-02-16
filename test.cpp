@@ -6,12 +6,12 @@
 using namespace std;
 
 int main(){
-    auto chess = data::super_board;
+    auto chess = data::board_highdiffi;
     const int n = chess[0].size();
 
     Sudoku<n> game = Sudoku<n>(chess);
     
-    //Sudoku_try_all<n> violate_game = Sudoku_try_all<n>(chess);
+    Sudoku_try_all<n> violate_game = Sudoku_try_all<n>(chess);
 
     auto start = chrono::high_resolution_clock::now();
     game.fillChessboard();
