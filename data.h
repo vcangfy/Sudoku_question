@@ -42,7 +42,7 @@ namespace data
         array<int,9>{0, 0, 0, 0, 0, 0, 0, 0, 2}
     };
 
-    array<array<int, 16>, 16> board_diffi_plus = {
+    array<array<int, 16>, 16> plus_board_diffi = {
         array<int,16>{  8,  0,  4,  0,    0,  0,  0,  0,    2,  0,  0, 13,    0,  5, 12,  0,},
         array<int,16>{  0,  0,  5,  0,    6, 11,  0,  2,    0,  4,  0, 12,    0,  9,  0,  7,},
         array<int,16>{ 13,  0, 10,  0,    0,  0,  0,  0,   16,  0,  7,  0,    8, 15,  0, 11,},

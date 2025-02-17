@@ -47,6 +47,11 @@ class Sudoku {
         uint32_t, uint32_t, int, function<void(uint32_t, uint32_t)>
     ); 
 
+    // 辅助函数：处理单个单元（行/列/宫）中的数对
+    void processUnitNakedPair_explicit(const vector<position>& unit);
+
+    void processUnitNakedPair_implicit(const vector<position>& unit);
+
 public:
     Sudoku<N>(chess<int, N> _Chessboard) : Chessboard(_Chessboard) {
         sqrt_n = (int)sqrt(N);
@@ -58,6 +63,8 @@ public:
     void method_2_PaiChu();
 
     void method_3_QuKuai();
+
+    void method_4_ShuDui();
 
     void highlevel_method_();
 
@@ -73,23 +80,14 @@ public:
             if(sure.size() > temp_sure_count) 
             {cout << endl << "method 3: " << endl; showChess(); temp_sure_count = sure.size();}
 
+            method_4_ShuDui();
+            if(sure.size() > temp_sure_count) 
+            {cout << endl << "method 4: " << endl; showChess(); temp_sure_count = sure.size();}
+
             method_2_PaiChu();
             if(sure.size() > temp_sure_count) 
             {cout << endl << "method 2: " << endl; showChess(); temp_sure_count = sure.size();}
         }
-
-        cout << endl;
-        bool all_right = true;
-        for(uint32_t i = 0; i < N; ++i) {
-            for(uint32_t j = 0; j < N; ++j) {
-                if(lattices_back[i][j].size() + lattices_front[i][j].size() != N) {
-                    all_right = false;
-                    cout << "[" << i << "," << j << "]  ";
-                }
-            }
-        }
-        if(all_right) cout << "all right.";
-        else cout << endl << "are wrong.";
     };
 
     void fillChessboard() {
@@ -325,33 +323,33 @@ void Sudoku<N>::method_3_QuKuai() {
                     }
                 }
 
-                if(could_be.size() == empty_count) {
-                //数对
-                    bool can_ShuDui = true;
-                    for (uint32_t y = block_col; y < block_col + sqrt_n; ++y) {
-                        if(Chessboard[x][y] == 0) {
-                            for(int num: could_be) {
-                                if(lattices_front[x][y].find(num) == lattices_front[x][y].end()) {
-                                    can_ShuDui = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if(!can_ShuDui) break;
-                    }    
-                    if(can_ShuDui) {
-                        for (uint32_t y = block_col; y < block_col + sqrt_n; ++y) {
-                            if(Chessboard[x][y] == 0) {
-                                lattices_back[x][y] = temp;
-                                lattices_front[x][y] = {};
-                                for(int num: could_be) {
-                                    lattices_back[x][y].erase(num);
-                                    lattices_front[x][y].insert(num);
-                                }
-                            }
-                        }
-                    } 
-                }
+                // if(could_be.size() == empty_count) {
+                // //简单数对
+                //     bool can_ShuDui = true;
+                //     for (uint32_t y = block_col; y < block_col + sqrt_n; ++y) {
+                //         if(Chessboard[x][y] == 0) {
+                //             for(int num: could_be) {
+                //                 if(lattices_front[x][y].find(num) == lattices_front[x][y].end()) {
+                //                     can_ShuDui = false;
+                //                     break;
+                //                 }
+                //             }
+                //         }
+                //         if(!can_ShuDui) break;
+                //     }    
+                //     if(can_ShuDui) {
+                //         for (uint32_t y = block_col; y < block_col + sqrt_n; ++y) {
+                //             if(Chessboard[x][y] == 0) {
+                //                 lattices_back[x][y] = temp;
+                //                 lattices_front[x][y] = {};
+                //                 for(int num: could_be) {
+                //                     lattices_back[x][y].erase(num);
+                //                     lattices_front[x][y].insert(num);
+                //                 }
+                //             }
+                //         }
+                //     } 
+                // }
             }
         }
     
@@ -395,32 +393,181 @@ void Sudoku<N>::method_3_QuKuai() {
                     }
                 }
 
-                if(could_be.size() == empty_count) {
-                    //数对
-                    bool can_ShuDui = true;
-                    for (uint32_t x = block_row; x < block_row + sqrt_n; ++x) {
-                        if(Chessboard[x][y] == 0) {
-                            for(int num: could_be) {
-                                if(lattices_front[x][y].find(num) == lattices_front[x][y].end()) {
-                                    can_ShuDui = false;
-                                    break;
+                // if(could_be.size() == empty_count) {
+                //     //数对
+                //     bool can_ShuDui = true;
+                //     for (uint32_t x = block_row; x < block_row + sqrt_n; ++x) {
+                //         if(Chessboard[x][y] == 0) {
+                //             for(int num: could_be) {
+                //                 if(lattices_front[x][y].find(num) == lattices_front[x][y].end()) {
+                //                     can_ShuDui = false;
+                //                     break;
+                //                 }
+                //             }
+                //         }
+                //         if(!can_ShuDui) break;
+                //     }    
+                //     if(can_ShuDui) {
+                //         for (uint32_t x = block_row; x < block_row + sqrt_n; ++x) {
+                //             if(Chessboard[x][y] == 0) {
+                //                 lattices_back[x][y] = temp;
+                //                 lattices_front[x][y] = {};
+                //                 for(int num: could_be) {
+                //                     lattices_back[x][y].erase(num);
+                //                     lattices_front[x][y].insert(num);
+                //                 }
+                //             }
+                //         }
+                //     }                
+                // }
+            }
+        }
+    }
+}
+
+template<int N>
+void Sudoku<N>::method_4_ShuDui() {
+    // 处理所有行
+    for (uint32_t row = 0; row < N; ++row) {
+        vector<position> unit;
+        for (uint32_t col = 0; col < N; ++col) {
+            unit.push_back({row, col});
+        }
+        processUnitNakedPair_explicit(unit);
+        processUnitNakedPair_implicit(unit);
+    }
+
+    // 处理所有列
+    for (uint32_t col = 0; col < N; ++col) {
+        vector<position> unit;
+        for (uint32_t row = 0; row < N; ++row) {
+            unit.push_back({row, col});
+        }
+        processUnitNakedPair_explicit(unit);
+        processUnitNakedPair_implicit(unit);
+    }
+
+    // 处理所有宫（3x3）
+    for (uint32_t block_row = 0; block_row < sqrt_n; ++block_row) {
+        for (uint32_t block_col = 0; block_col < sqrt_n; ++block_col) {
+            vector<position> unit;
+            for (uint32_t i = 0; i < sqrt_n; ++i) {
+                for (uint32_t j = 0; j < sqrt_n; ++j) {
+                    uint32_t r = block_row * sqrt_n + i;
+                    uint32_t c = block_col * sqrt_n + j;
+                    unit.push_back({r, c});
+                }
+            }
+            processUnitNakedPair_explicit(unit);
+            processUnitNakedPair_implicit(unit);
+        }
+    }
+}
+
+template<int N>
+void Sudoku<N>::processUnitNakedPair_explicit(
+    const vector<position>& unit
+){
+    // 收集候选数数量为2的格子坐标
+    vector<position> possible_pairs;
+    for (const auto& cell : unit) {
+        uint32_t r = cell[0], c = cell[1];
+        if (Chessboard[r][c] == 0 && lattices_front[r][c].size() == 2) {
+            possible_pairs.push_back({r, c});
+        }
+    }
+
+    // 寻找候选数完全相同的格子对
+    for (size_t i = 0; i < possible_pairs.size(); ++i) {
+        for (size_t j = i + 1; j < possible_pairs.size(); ++j) {
+            auto& [r1, c1] = possible_pairs[i];
+            auto& [r2, c2] = possible_pairs[j];
+            // 判断候选数是否严格相同
+            if (lattices_front[r1][c1] == lattices_front[r2][c2]) {
+                // 获取数对的值
+                const auto& pair_values = lattices_front[r1][c1];
+                // 处理单元内所有格子
+                for (const auto& cell : unit) {
+                    uint32_t r = cell[0], c = cell[1];
+                    if (Chessboard[r][c] != 0) continue;
+                        
+                    if ((r == r1 && c == c1) || (r == r2 && c == c2)) {;}
+                    else {
+                        // 处理其他格子：移除数对值
+                        for (int val : pair_values) {
+                            if (lattices_front[r][c].count(val)) {
+                                lattices_front[r][c].erase(val);
+                                lattices_back[r][c].insert(val);
+                                if(lattices_front[r][c].size() == 1) {
+                                    Chessboard[r][c] = val;
+                                    sure.push_back({r,c});
                                 }
                             }
                         }
-                        if(!can_ShuDui) break;
-                    }    
-                    if(can_ShuDui) {
-                        for (uint32_t x = block_row; x < block_row + sqrt_n; ++x) {
-                            if(Chessboard[x][y] == 0) {
-                                lattices_back[x][y] = temp;
-                                lattices_front[x][y] = {};
-                                for(int num: could_be) {
-                                    lattices_back[x][y].erase(num);
-                                    lattices_front[x][y].insert(num);
-                                }
-                            }
+                    }
+                }
+                //return; // 每次只处理一个数对
+            }
+        }
+    }
+}
+
+template<int N>
+void Sudoku<N>::processUnitNakedPair_implicit(
+    const vector<position>& unit
+) {
+    // 遍历所有两两组合
+    for (int i = 0; i < unit.size(); ++i) {
+        for (int j = i + 1; j < unit.size(); ++j) {
+            auto& [x1, y1] = unit[i];
+            auto& [x2, y2] = unit[j];
+            
+            // 跳过已填数字的格子
+            if (Chessboard[x1][y1] != 0 || Chessboard[x2][y2] != 0) continue;
+            
+            unordered_set<int> common;
+            for (int num : lattices_front[x1][y1]) {
+                if (lattices_front[x2][y2].count(num)) {
+                    common.insert(num);
+                }
+            }
+            
+            // 公共候选数小于等于2个则跳过
+            if (common.size() <= 2) continue;  
+            
+            // 生成所有可能的数对组合
+            vector<int> candidates(common.begin(), common.end());
+            for (int a = 0; a < candidates.size(); ++a) {
+                for (int b = a + 1; b < candidates.size(); ++b) {
+                    int num1 = candidates[a];
+                    int num2 = candidates[b];
+                    
+                    // 检查单元其他格子是否都不含这两个数
+                    bool valid = true;
+                    for (auto& pos : unit) {
+                        auto& [x, y] = pos;
+                        if ((x == x1 && y == y1) || (x == x2 && y == y2)) continue;
+                        
+                        if (lattices_front[x][y].count(num1) || 
+                            lattices_front[x][y].count(num2)) {
+                            valid = false;
+                            break;
                         }
-                    }                
+                    }
+                    
+                    if (valid) {
+                        // 处理第一个格子
+                        lattices_front[x1][y1] = {num1, num2};
+                        lattices_back[x1][y1] = temp;
+                        lattices_back[x1][y1].erase(num1);
+                        lattices_back[x1][y1].erase(num2);
+                        
+                        // 处理第二个格子
+                        lattices_front[x2][y2] = {num1, num2};
+                        lattices_back[x2][y2] = temp;
+                        lattices_back[x2][y2].erase(num1);
+                        lattices_back[x2][y2].erase(num2);
+                    }
                 }
             }
         }
