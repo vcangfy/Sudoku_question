@@ -3,8 +3,8 @@
 using namespace std;
 
 int main() {
-    int n = 25;
-    int sqrt_n = (int)sqrt(25);
+    int n = 9;
+    int sqrt_n = (int)sqrt(n);
     for(int i = 0; i < n; ++i) {
         if(i && i % sqrt_n == 0)
             cout << endl;

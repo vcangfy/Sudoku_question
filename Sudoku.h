@@ -37,6 +37,7 @@ class Sudoku {
 
     vector<position> sure;
     uint32_t remember_sure;
+    bool is_changed;
     
     unordered_set<int> temp;
     int sqrt_n;
@@ -70,7 +71,8 @@ public:
 
     void fillChessboard_debug() {
         int temp_sure_count = sure.size();
-        while(sure.size() != N * N && remember_sure != sure.size()) {
+        while(sure.size() != N * N && is_changed) {
+            is_changed = false;
 
             method_1_WeiYu();
             if(sure.size() > temp_sure_count) 
@@ -91,9 +93,12 @@ public:
     };
 
     void fillChessboard() {
-        while(sure.size() != N * N && remember_sure != sure.size()) {
+        while(sure.size() != N * N && is_changed) {
+            is_changed = false;
+
             method_1_WeiYu();
             method_3_QuKuai();
+            method_4_ShuDui();
             method_2_PaiChu();
         }
     }
@@ -121,6 +126,7 @@ void Sudoku<N>::init_state() {
             }
         }
     }
+    is_changed = true;
 }
 
 template<int N>
@@ -192,6 +198,7 @@ void Sudoku<N>::method_1_WeiYu() {
                 qu.push({x,y}); 
             }
         );
+        is_changed = true;
     }
     remember_sure = sure.size();
 }
@@ -259,6 +266,8 @@ void Sudoku<N>::method_2_PaiChu() {
     
                 // 若满足条件，填入数字并更新排除集
                 if (canFill) {
+                    is_changed = true;
+
                     Chessboard[i][j] = num;
                     lattices_front[i][j] = {num};
                     lattices_back[i][j] = temp;
@@ -312,6 +321,8 @@ void Sudoku<N>::method_3_QuKuai() {
                         could_be.push_back(num);
                         for (uint32_t y_global = 0; y_global < N; ++y_global) {
                             if ((y_global < block_col || y_global >= block_col + sqrt_n) && Chessboard[x][y_global] == 0 ) {
+                                //is_changed = true;
+
                                 lattices_front[x][y_global].erase(num);
                                 lattices_back[x][y_global].insert(num);
                                 if(lattices_front[x][y_global].size() == 1) {
@@ -382,6 +393,8 @@ void Sudoku<N>::method_3_QuKuai() {
                         could_be.push_back(num);
                         for (uint32_t x_global = 0; x_global < N; ++x_global) {
                             if ((x_global < block_row || x_global >= block_row + sqrt_n) && Chessboard[x_global][y] == 0) {
+                                //is_changed = true;
+                                
                                 lattices_front[x_global][y].erase(num);
                                 lattices_back[x_global][y].insert(num);
                                 if(lattices_front[x_global][y].size() == 1) {
@@ -496,6 +509,8 @@ void Sudoku<N>::processUnitNakedPair_explicit(
                         // 处理其他格子：移除数对值
                         for (int val : pair_values) {
                             if (lattices_front[r][c].count(val)) {
+                                is_changed = true;
+
                                 lattices_front[r][c].erase(val);
                                 lattices_back[r][c].insert(val);
                                 if(lattices_front[r][c].size() == 1) {
@@ -556,6 +571,8 @@ void Sudoku<N>::processUnitNakedPair_implicit(
                     }
                     
                     if (valid) {
+                        is_changed = true;
+
                         // 处理第一个格子
                         lattices_front[x1][y1] = {num1, num2};
                         lattices_back[x1][y1] = temp;
@@ -600,7 +617,7 @@ void Sudoku<N>::showChess() {
         cout << endl;
     }
     cout << "------ ------ ------ ------ ------";
-    if(sure.size() == N*N) cout << endl << "Finish";
+    if(sure.size() == N*N) cout << endl << "Finish. ";
 };
 
 #endif

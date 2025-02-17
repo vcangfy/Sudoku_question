@@ -6,6 +6,27 @@ using namespace std;
 
 namespace data
 {
+    array<array<int, 4>, 4> small_board = {{
+        {{0,0, 0,0}},
+        {{0,0, 1,2}},
+        {{1,0, 0,4}},
+        {{4,0, 3,1}},
+    }};
+
+    array<array<int, 9>, 9> blank_9x9 = {
+        array<int,9>{  0,  0,  0,    0,  0,  0,    0,  0,  0,},
+        array<int,9>{  0,  0,  0,    0,  0,  0,    0,  0,  0,},
+        array<int,9>{  0,  0,  0,    0,  0,  0,    0,  0,  0,},
+
+        array<int,9>{  0,  0,  0,    0,  0,  0,    0,  0,  0,},
+        array<int,9>{  0,  0,  0,    0,  0,  0,    0,  0,  0,},
+        array<int,9>{  0,  0,  0,    0,  0,  0,    0,  0,  0,},
+
+        array<int,9>{  0,  0,  0,    0,  0,  0,    0,  0,  0,},
+        array<int,9>{  0,  0,  0,    0,  0,  0,    0,  0,  0,},
+        array<int,9>{  0,  0,  0,    0,  0,  0,    0,  0,  0,},
+    };
+
     array<array<int, 9>, 9> board_diffi = {
         array<int,9>{4, 0, 0, 0, 7, 0, 0, 8, 0},
         array<int,9>{0, 0, 0, 2, 0, 9, 0, 3, 0},
@@ -28,7 +49,7 @@ namespace data
         {{0, 1, 0, 0, 0, 5, 0, 2, 0}}, // 第6行
         {{0, 0, 0, 0, 4, 0, 8, 0, 0}}, // 第7行
         {{3, 0, 8, 0, 0, 0, 0, 7, 0}}  // 第8行
-    }};
+    }};//非唯一解
 
     array<array<int, 9>, 9> board_extremediffi = {
         array<int,9>{0, 0, 0, 0, 0, 5, 0, 8, 0},
@@ -40,7 +61,7 @@ namespace data
         array<int,9>{0, 0, 0, 0, 7, 0, 0, 0, 0},
         array<int,9>{5, 0, 9, 0, 0, 0, 0, 0, 0},
         array<int,9>{0, 0, 0, 0, 0, 0, 0, 0, 2}
-    };
+    };//有超级多解
 
     array<array<int, 16>, 16> plus_board_diffi = {
         array<int,16>{  8,  0,  4,  0,    0,  0,  0,  0,    2,  0,  0, 13,    0,  5, 12,  0,},
