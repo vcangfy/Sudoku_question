@@ -101,6 +101,8 @@ public:
             method_4_ShuDui();
             method_2_PaiChu();
         }
+
+        showChess();
     }
 
     void showChess();
@@ -485,7 +487,7 @@ void Sudoku<N>::processUnitNakedPair_explicit(
     vector<position> possible_pairs;
     for (const auto& cell : unit) {
         uint32_t r = cell[0], c = cell[1];
-        if (Chessboard[r][c] == 0 && lattices_front[r][c].size() == 2) {
+        if (lattices_front[r][c].size() == 2) {
             possible_pairs.push_back({r, c});
         }
     }
@@ -514,7 +516,7 @@ void Sudoku<N>::processUnitNakedPair_explicit(
                                 lattices_front[r][c].erase(val);
                                 lattices_back[r][c].insert(val);
                                 if(lattices_front[r][c].size() == 1) {
-                                    Chessboard[r][c] = val;
+                                    Chessboard[r][c] = (*lattices_front[r][c].begin());
                                     sure.push_back({r,c});
                                 }
                             }

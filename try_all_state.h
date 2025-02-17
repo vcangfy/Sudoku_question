@@ -73,9 +73,9 @@ public:
 
     void printGridToJson() {
         // 构建 JSON 结构
-        *file << "\n  \"solution_" << ans_count++ << "\": [\n";
+        *file << "\n    [\n";
         for (uint32_t i = 0; i < n; ++i) {
-            *file << "    [";
+            *file << "      [";
             for (uint32_t j = 0; j < n; ++j) {
                 *file << grid[i][j];
                 if (j < n - 1) *file << ", ";  // 自动处理逗号分隔
@@ -84,7 +84,7 @@ public:
             if (i < n - 1) *file << ",";      // 最后一行的特殊处理
             *file << "\n";
         }
-        *file << "  ],";
+        *file << "    ],";
     }
 
     void solveSudoku() {
@@ -97,10 +97,11 @@ public:
 
         *file << "{";
 
+        *file << "\n  \"solution" << "\": [";
         //quick_solveSudoku_DFS(0, 0);
         slow_solveSudoku_DFS(0, 0);//反而这个更快
 
-        *file << "\n  \"count\": " << ans_count << "\n}";
+        *file << "\n  ],\n  \"count\": " << ans_count << "\n}";
     }   
 
 };
@@ -211,4 +212,5 @@ bool Sudoku_try_all<n>::isValid(
     }
     return true;
 }
+
 #endif
