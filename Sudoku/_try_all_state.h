@@ -73,6 +73,7 @@ public:
 
     void printGridToJson() {
         // 构建 JSON 结构
+        ++ans_count;
         *file << "\n    [\n";
         for (uint32_t i = 0; i < n; ++i) {
             *file << "      [";
@@ -88,7 +89,7 @@ public:
     }
 
     void solveSudoku() {
-        ofstream outFile("ans.json");
+        ofstream outFile("tool\\ans.json");
         file = &outFile;
         if (!(*file)) {
             std::cerr << "无法创建 ans.json 文件" << std::endl;
